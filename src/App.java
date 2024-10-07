@@ -26,17 +26,21 @@ public class App extends PApplet{
     int shapeCords[][] = {{-1,-1},{-1,-1},{-1,-1},{-1,-1}}; 
     int shape = 1; //1 is square, 2 is L, 3 is BL, 4 is Line, 5 is LZig, 6 is BLZig, 7 is DaT!
     boolean falling = false;
+    int rotationState = 0;
     int speed = 18;
     int fallingX = -1;
     int fallingY = -1;
     int fallingColor = 0;
     int score = 0;
     boolean gameIsRunning = true;
+    PFont font;
     public static void main(String[] args)  {
         PApplet.main("App");
     }
 
     public void setup(){
+        font = createFont("Arial", 20, true);
+        textFont(font);
         background(0);
     }
 
@@ -96,6 +100,11 @@ public class App extends PApplet{
                         rect(cord(x), cord(y), 30, 30);
                     }
                 }
+                checkEndGame();
+            }else{
+                fill(255);
+                text("Game Over :)\nScore: "+score,10,20);
+                noLoop();
             }
         }
     }
@@ -136,6 +145,12 @@ public class App extends PApplet{
                     }
                 }
                 if(canFall){fallingY++;}
+            }else if(keyCode == UP){
+                if(rotationState == 3){
+                    rotationState = 0;
+                }else{
+                    rotationState++;
+                }
             }
             chooseShape(shape);
             setShape();
@@ -148,6 +163,7 @@ public class App extends PApplet{
         return coordinates;
     }
 
+    
     public void makeSquare(){
         shapeCords[0][0] = fallingX;
         shapeCords[0][1] = fallingY;
@@ -163,59 +179,199 @@ public class App extends PApplet{
     }
 
     public void makeL(){
-        shapeCords[0][0] = fallingX;
-        shapeCords[0][1] = fallingY;
+        if(rotationState == 0){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
 
-        shapeCords[1][0] = fallingX ;
-        shapeCords[1][1] = fallingY+1;
+            shapeCords[1][0] = fallingX ;
+            shapeCords[1][1] = fallingY+1;
 
-        shapeCords[2][0] = fallingX;
-        shapeCords[2][1] = fallingY + 2;
+            shapeCords[2][0] = fallingX;
+            shapeCords[2][1] = fallingY + 2;
 
-        shapeCords[3][0] = fallingX + 1;
-        shapeCords[3][1] = fallingY + 2;
+            shapeCords[3][0] = fallingX + 1;
+            shapeCords[3][1] = fallingY + 2;
+        }else if(rotationState == 1){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX + 1;
+            shapeCords[1][1] = fallingY;
+
+            shapeCords[2][0] = fallingX+2;
+            shapeCords[2][1] = fallingY;
+
+            shapeCords[3][0] = fallingX + 2;
+            shapeCords[3][1] = fallingY - 1;
+        }else if(rotationState == 2){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX;
+            shapeCords[1][1] = fallingY-1;
+
+            shapeCords[2][0] = fallingX;
+            shapeCords[2][1] = fallingY - 2;
+
+            shapeCords[3][0] = fallingX - 1;
+            shapeCords[3][1] = fallingY - 2;
+        }else if(rotationState == 3){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX-1;
+            shapeCords[1][1] = fallingY;
+
+            shapeCords[2][0] = fallingX-2;
+            shapeCords[2][1] = fallingY;
+
+            shapeCords[3][0] = fallingX -2;
+            shapeCords[3][1] = fallingY + 1;
+        }
     }
 
     public void makeBL(){
-        shapeCords[0][0] = fallingX;
-        shapeCords[0][1] = fallingY;
+        if (rotationState == 0){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
 
-        shapeCords[1][0] = fallingX ;
-        shapeCords[1][1] = fallingY+1;
+            shapeCords[1][0] = fallingX ;
+            shapeCords[1][1] = fallingY+1;
 
-        shapeCords[2][0] = fallingX;
-        shapeCords[2][1] = fallingY + 2;
+            shapeCords[2][0] = fallingX;
+            shapeCords[2][1] = fallingY + 2;
 
-        shapeCords[3][0] = fallingX - 1;
-        shapeCords[3][1] = fallingY + 2;
+            shapeCords[3][0] = fallingX - 1;
+            shapeCords[3][1] = fallingY + 2;
+        }else if(rotationState == 1){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX + 1;
+            shapeCords[1][1] = fallingY;
+
+            shapeCords[2][0] = fallingX+2;
+            shapeCords[2][1] = fallingY;
+
+            shapeCords[3][0] = fallingX + 2;
+            shapeCords[3][1] = fallingY + 1;
+        }else if(rotationState == 2){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX;
+            shapeCords[1][1] = fallingY-1;
+
+            shapeCords[2][0] = fallingX;
+            shapeCords[2][1] = fallingY - 2;
+
+            shapeCords[3][0] = fallingX + 1;
+            shapeCords[3][1] = fallingY - 2;
+        }else if(rotationState == 3){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX-1;
+            shapeCords[1][1] = fallingY;
+
+            shapeCords[2][0] = fallingX-2;
+            shapeCords[2][1] = fallingY;
+
+            shapeCords[3][0] = fallingX -2;
+            shapeCords[3][1] = fallingY - 1;
+        }
     }
 
     public void makeLine(){
-        shapeCords[0][0] = fallingX;
-        shapeCords[0][1] = fallingY;
+        if(rotationState == 0){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
 
-        shapeCords[1][0] = fallingX ;
-        shapeCords[1][1] = fallingY+1;
+            shapeCords[1][0] = fallingX ;
+            shapeCords[1][1] = fallingY+1;
 
-        shapeCords[2][0] = fallingX;
-        shapeCords[2][1] = fallingY + 2;
+            shapeCords[2][0] = fallingX;
+            shapeCords[2][1] = fallingY + 2;
 
-        shapeCords[3][0] = fallingX;
-        shapeCords[3][1] = fallingY + 3;
+            shapeCords[3][0] = fallingX;
+            shapeCords[3][1] = fallingY + 3;
+        }else if(rotationState == 1){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX - 1;
+            shapeCords[1][1] = fallingY;
+
+            shapeCords[2][0] = fallingX-2;
+            shapeCords[2][1] = fallingY;
+
+            shapeCords[3][0] = fallingX-3;
+            shapeCords[3][1] = fallingY;
+        }else if(rotationState == 2){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX ;
+            shapeCords[1][1] = fallingY-1;
+
+            shapeCords[2][0] = fallingX;
+            shapeCords[2][1] = fallingY - 2;
+
+            shapeCords[3][0] = fallingX;
+            shapeCords[3][1] = fallingY - 3;
+        }else if(rotationState==3){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX + 1;
+            shapeCords[1][1] = fallingY;
+
+            shapeCords[2][0] = fallingX+2;
+            shapeCords[2][1] = fallingY;
+
+            shapeCords[3][0] = fallingX + 2;
+            shapeCords[3][1] = fallingY;
+        }
     }
 
     public void makeLZig(){
-        shapeCords[0][0] = fallingX;
-        shapeCords[0][1] = fallingY;
+        if(rotationState == 0){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
 
-        shapeCords[1][0] = fallingX;
-        shapeCords[1][1] = fallingY+1;
+            shapeCords[1][0] = fallingX;
+            shapeCords[1][1] = fallingY+1;
 
-        shapeCords[2][0] = fallingX+1;
-        shapeCords[2][1] = fallingY+1;
+            shapeCords[2][0] = fallingX+1;
+            shapeCords[2][1] = fallingY+1;
 
-        shapeCords[3][0] = fallingX+1;
-        shapeCords[3][1] = fallingY+2;
+            shapeCords[3][0] = fallingX+1;
+            shapeCords[3][1] = fallingY+2;
+        }else if(rotationState == 1){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX-1;
+            shapeCords[1][1] = fallingY;
+
+            shapeCords[2][0] = fallingX-1;
+            shapeCords[2][1] = fallingY+1;
+
+            shapeCords[3][0] = fallingX-2;
+            shapeCords[3][1] = fallingY+1;
+        }else if(rotationState == 3){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX;
+            shapeCords[1][1] = fallingY-1;
+
+            shapeCords[2][0] = fallingX-1;
+            shapeCords[2][1] = fallingY-1;
+
+            shapeCords[3][0] = fallingX-2;
+            shapeCords[3][1] = fallingY-1;
+        }
     }
     public void makeBLZig(){
         shapeCords[0][0] = fallingX;
@@ -329,8 +485,23 @@ public class App extends PApplet{
     }
 
     public void checkEndGame(){
-        for(int i = 0;i<10;i++){
-            
+        for (int x = 0; x < 10; x++) {
+            if (board[0][x] != 0) {
+                boolean partOfFallingShape = false;
+    
+                for (int i = 0; i < shapeCords.length; i++) {
+                    int shapeX = shapeCords[i][0];
+                    int shapeY = shapeCords[i][1];
+                    if (shapeX == x && shapeY == 0) {
+                        partOfFallingShape = true;
+                        break;
+                    }
+                }
+                if (!partOfFallingShape) {
+                    gameIsRunning = false;
+                    return;
+                }
+            }
         }
     }
 
