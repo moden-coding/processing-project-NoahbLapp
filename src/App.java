@@ -151,11 +151,7 @@ public class App extends PApplet{
                     }
                     if(canFall){fallingY++;}
                 }else if(keyCode == UP){
-                    if(rotationState == 3){
-                        rotationState = 0;
-                    }else{
-                        rotationState++;
-                    }
+                    rotateShape();
                 }
                 chooseShape(shape);
                 setShape();
@@ -171,8 +167,34 @@ public class App extends PApplet{
         return coordinates;
     }
 
-    
-    
+    public boolean canRotate(int[][] shapeCordsCopy){
+        for(int i = 0; i<shapeCordsCopy.length;i++){
+            int x = shapeCordsCopy[i][0];
+            int y = shapeCordsCopy[i][1];
+            if(x < 0 || x >= 10 || y >= 20 || (y >= 0 && board[y][x] != 0)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void rotateShape(){
+        int[][] tempShapeCords = new int[4][2];
+        for (int i = 0; i < shapeCords.length; i++) {
+            tempShapeCords[i][0] = shapeCords[i][0];
+            tempShapeCords[i][1] = shapeCords[i][1];
+        }
+
+
+        if(rotationState == 3){
+            rotationState = 0;
+        }else{
+            rotationState++;
+        }
+        
+        chooseShape(shape);
+    }
+
     public void makeSquare(){
         shapeCords[0][0] = fallingX;
         shapeCords[0][1] = fallingY;
@@ -523,10 +545,12 @@ public class App extends PApplet{
     }
 
     public void drawShapes(){
-        board[shapeCords[0][1]][shapeCords[0][0]] = fallingColor;
-        board[shapeCords[1][1]][shapeCords[1][0]] = fallingColor;
-        board[shapeCords[2][1]][shapeCords[2][0]] = fallingColor;
-        board[shapeCords[3][1]][shapeCords[3][0]] = fallingColor;
+        if(canRotate(shapeCords)){
+            board[shapeCords[0][1]][shapeCords[0][0]] = fallingColor;
+            board[shapeCords[1][1]][shapeCords[1][0]] = fallingColor;
+            board[shapeCords[2][1]][shapeCords[2][0]] = fallingColor;
+            board[shapeCords[3][1]][shapeCords[3][0]] = fallingColor;
+        }
     }
 
     public void clearShape(){
