@@ -58,9 +58,13 @@ public class App extends PApplet{
                     for(int i = 0; i<shapeCords.length;i++){
                         int x = shapeCords[i][0];
                         int y = shapeCords[i][1];
-                        if (y >= 19 || (y + 1 < 20 && board[y + 1][x] != 0)) {
-                        canFall = false;
-                        break;
+                        try{
+                            if (y >= 19 || (y + 1 < 20 && board[y + 1][x] != 0)) {
+                                canFall = false;
+                                break;
+                            }
+                        }catch(Exception e){
+                            break;
                         }
                     }
                     if(canFall){
@@ -73,10 +77,10 @@ public class App extends PApplet{
                     }
                     
                 }else{
-                    fallingX = (int) random(1,9);
+                    fallingX = (int) random(2,9);
                     fallingY = 0;
                     fallingColor = (int)random(1,4);
-                    shape = (int)random(1,7);
+                    shape = (int)random(1,8);
                     chooseShape(shape);
                     if (board[fallingY][fallingX] == 0) {
                         board[fallingY][fallingX] = fallingColor;
@@ -110,50 +114,54 @@ public class App extends PApplet{
     }
 
     public void keyPressed() {
-        if (falling) {
-            clearShape(); 
-            if (keyCode == LEFT) {
-                boolean canMoveLeft = true;
-                for(int i = 0; i<shapeCords.length;i++){
-                    int x = shapeCords[i][0];
-                    int y = shapeCords[i][1];
-                    if (x - 1 < 0 || board[y][x - 1] != 0) {
-                        canMoveLeft = false;
+        try{
+            if (falling) {
+                clearShape(); 
+                if (keyCode == LEFT) {
+                    boolean canMoveLeft = true;
+                    for(int i = 0; i<shapeCords.length;i++){
+                        int x = shapeCords[i][0];
+                        int y = shapeCords[i][1];
+                        if (x - 1 < 0 || board[y][x - 1] != 0) {
+                            canMoveLeft = false;
+                            break;
+                        }
+                    }
+                    if(canMoveLeft){fallingX--;}
+                } else if (keyCode == RIGHT) {
+                    boolean canMoveRight = true;
+                    for(int i = 0; i<shapeCords.length;i++){
+                        int x = shapeCords[i][0];
+                        int y = shapeCords[i][1];
+                        if (x + 1 >= 10 || board[y][x + 1] != 0) {
+                            canMoveRight = false;
+                            break;
+                        }
+                    }
+                    if(canMoveRight){fallingX++;}
+                } else if (keyCode == DOWN && fallingY < 18 && board[fallingY + 1][fallingX] == 0) {
+                    boolean canFall = true;
+                    for(int i = 0; i<shapeCords.length;i++){
+                        int x = shapeCords[i][0];
+                        int y = shapeCords[i][1];
+                        if (y >= 19 || (y + 1 < 20 && board[y + 1][x] != 0)) {
+                        canFall = false;
                         break;
+                        }
+                    }
+                    if(canFall){fallingY++;}
+                }else if(keyCode == UP){
+                    if(rotationState == 3){
+                        rotationState = 0;
+                    }else{
+                        rotationState++;
                     }
                 }
-                if(canMoveLeft){fallingX--;}
-            } else if (keyCode == RIGHT) {
-                boolean canMoveRight = true;
-                for(int i = 0; i<shapeCords.length;i++){
-                    int x = shapeCords[i][0];
-                    int y = shapeCords[i][1];
-                    if (x + 1 >= 10 || board[y][x + 1] != 0) {
-                        canMoveRight = false;
-                        break;
-                    }
-                }
-                if(canMoveRight){fallingX++;}
-            } else if (keyCode == DOWN && fallingY < 18 && board[fallingY + 1][fallingX] == 0) {
-                boolean canFall = true;
-                for(int i = 0; i<shapeCords.length;i++){
-                    int x = shapeCords[i][0];
-                    int y = shapeCords[i][1];
-                    if (y >= 19 || (y + 1 < 20 && board[y + 1][x] != 0)) {
-                    canFall = false;
-                    break;
-                    }
-                }
-                if(canFall){fallingY++;}
-            }else if(keyCode == UP){
-                if(rotationState == 3){
-                    rotationState = 0;
-                }else{
-                    rotationState++;
-                }
+                chooseShape(shape);
+                setShape();
             }
-            chooseShape(shape);
-            setShape();
+        }catch(Exception e){
+            System.out.println("error:" + e.getMessage());
         }
     }
     
@@ -163,6 +171,7 @@ public class App extends PApplet{
         return coordinates;
     }
 
+    
     
     public void makeSquare(){
         shapeCords[0][0] = fallingX;
@@ -312,24 +321,24 @@ public class App extends PApplet{
             shapeCords[0][1] = fallingY;
 
             shapeCords[1][0] = fallingX ;
-            shapeCords[1][1] = fallingY-1;
+            shapeCords[1][1] = fallingY+1;
 
             shapeCords[2][0] = fallingX;
-            shapeCords[2][1] = fallingY - 2;
+            shapeCords[2][1] = fallingY+2;
 
             shapeCords[3][0] = fallingX;
-            shapeCords[3][1] = fallingY - 3;
+            shapeCords[3][1] = fallingY + 3;
         }else if(rotationState==3){
             shapeCords[0][0] = fallingX;
             shapeCords[0][1] = fallingY;
 
-            shapeCords[1][0] = fallingX + 1;
+            shapeCords[1][0] = fallingX+1;
             shapeCords[1][1] = fallingY;
 
             shapeCords[2][0] = fallingX+2;
             shapeCords[2][1] = fallingY;
 
-            shapeCords[3][0] = fallingX + 2;
+            shapeCords[3][0] = fallingX+3;
             shapeCords[3][1] = fallingY;
         }
     }
@@ -364,7 +373,58 @@ public class App extends PApplet{
             shapeCords[0][1] = fallingY;
 
             shapeCords[1][0] = fallingX;
+            shapeCords[1][1] = fallingY+1;
+
+            shapeCords[2][0] = fallingX-1;
+            shapeCords[2][1] = fallingY+1;
+
+            shapeCords[3][0] = fallingX-1;
+            shapeCords[3][1] = fallingY+2;
+        }
+    }
+    public void makeBLZig(){
+        if(rotationState==0){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX;
+            shapeCords[1][1] = fallingY+1;
+
+            shapeCords[2][0] = fallingX-1;
+            shapeCords[2][1] = fallingY+1;
+
+            shapeCords[3][0] = fallingX-1;
+            shapeCords[3][1] = fallingY+2;
+        }else if(rotationState==1){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX+1;
+            shapeCords[1][1] = fallingY;
+
+            shapeCords[2][0] = fallingX+1;
+            shapeCords[2][1] = fallingY+1;
+
+            shapeCords[3][0] = fallingX+2;
+            shapeCords[3][1] = fallingY+1;
+        }else if(rotationState==2){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX;
             shapeCords[1][1] = fallingY-1;
+
+            shapeCords[2][0] = fallingX+1;
+            shapeCords[2][1] = fallingY-1;
+
+            shapeCords[3][0] = fallingX+1;
+            shapeCords[3][1] = fallingY-2;
+        }else if(rotationState==3){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX-1;
+            shapeCords[1][1] = fallingY;
 
             shapeCords[2][0] = fallingX-1;
             shapeCords[2][1] = fallingY-1;
@@ -373,32 +433,57 @@ public class App extends PApplet{
             shapeCords[3][1] = fallingY-1;
         }
     }
-    public void makeBLZig(){
-        shapeCords[0][0] = fallingX;
-        shapeCords[0][1] = fallingY;
-
-        shapeCords[1][0] = fallingX;
-        shapeCords[1][1] = fallingY+1;
-
-        shapeCords[2][0] = fallingX-1;
-        shapeCords[2][1] = fallingY+1;
-
-        shapeCords[3][0] = fallingX-1;
-        shapeCords[3][1] = fallingY+2;
-    }
 
     public void makeDaT(){
-        shapeCords[0][0] = fallingX;
-        shapeCords[0][1] = fallingY;
+        if(rotationState==0){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
 
-        shapeCords[1][0] = fallingX;
-        shapeCords[1][1] = fallingY+1;
+            shapeCords[1][0] = fallingX-1;
+            shapeCords[1][1] = fallingY+1;
 
-        shapeCords[2][0] = fallingX+1;
-        shapeCords[2][1] = fallingY+1;
+            shapeCords[2][0] = fallingX;
+            shapeCords[2][1] = fallingY+1;
 
-        shapeCords[3][0] = fallingX;
-        shapeCords[3][1] = fallingY+2;
+            shapeCords[3][0] = fallingX+1;
+            shapeCords[3][1] = fallingY+1;
+        }else if(rotationState==1){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX;
+            shapeCords[1][1] = fallingY+1;
+
+            shapeCords[2][0] = fallingX-1;
+            shapeCords[2][1] = fallingY+1;
+
+            shapeCords[3][0] = fallingX;
+            shapeCords[3][1] = fallingY+2;
+        }else if(rotationState==3){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX;
+            shapeCords[1][1] = fallingY+1;
+
+            shapeCords[2][0] = fallingX+1;
+            shapeCords[2][1] = fallingY+1;
+
+            shapeCords[3][0] = fallingX;
+            shapeCords[3][1] = fallingY+2;
+        }else if(rotationState==2){
+            shapeCords[0][0] = fallingX;
+            shapeCords[0][1] = fallingY;
+
+            shapeCords[1][0] = fallingX+1;
+            shapeCords[1][1] = fallingY;
+
+            shapeCords[2][0] = fallingX+1;
+            shapeCords[2][1] = fallingY+1;
+
+            shapeCords[3][0] = fallingX+2;
+            shapeCords[3][1] = fallingY;
+        }
     }
 
     public void chooseShape(int shapeToMake){//1 is square, 2 is L, 3 is BL, 4 is Line, 5 is LZig, 6 is BLZig, 7 is DaT!
