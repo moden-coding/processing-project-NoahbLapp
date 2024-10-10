@@ -89,7 +89,6 @@ public class App extends PApplet{
                 }
                 clearRows();
                 background(0);
-                drawShapes();
                 for (int y = 0; y < 20; y++) {
                     for (int x = 0; x < 10; x++) {
                         if (board[y][x] == 1) {
@@ -540,16 +539,15 @@ public class App extends PApplet{
             int y = shapeCords[i][1];
             if (x >= 0 && x < 10 && y >= 0 && y < 20) {
                 board[y][x] = fallingColor;
+            }else{
+                if(x < 0){
+                    int offSetDistance = -x;
+                    for(int offset = 0; i < shapeCords.length; i++){
+                        int start = shapeCords[i][0];
+                        shapeCords[i][0] = start + offSetDistance;
+                    }
+                }
             }
-        }
-    }
-
-    public void drawShapes(){
-        if(canRotate(shapeCords)){
-            board[shapeCords[0][1]][shapeCords[0][0]] = fallingColor;
-            board[shapeCords[1][1]][shapeCords[1][0]] = fallingColor;
-            board[shapeCords[2][1]][shapeCords[2][0]] = fallingColor;
-            board[shapeCords[3][1]][shapeCords[3][0]] = fallingColor;
         }
     }
 
