@@ -1,47 +1,40 @@
 import processing.core.*;
 
 public class App extends PApplet{
-    int board[][] = {//Three colors 0 is empty, 1 is red, 2 is green, 3 is blue
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0},
-    };
+    int board[][] = new int[20][10];//Three colors 0 is empty, 1 is red, 2 is green, 3 is blue
     int shapeCords[][] = {{-1,-1},{-1,-1},{-1,-1},{-1,-1}}; 
     int shape = 1; //1 is square, 2 is L, 3 is BL, 4 is Line, 5 is LZig, 6 is BLZig, 7 is DaT!
-    boolean falling = false;
-    int rotationState = 0;
-    int speed = 18;
+    boolean falling = false; //sets to false when it needs to make a new shape
+    int rotationState = 0; 
+    int speed = 20;//larger speeds make it slower
+
+    //one point that the shape revolves around
     int fallingX = -1;
     int fallingY = -1;
+
     int fallingColor = 0;
+
+    //start screen screen and end screen variables
     int score = 0;
-    boolean gameIsRunning = true;
+    boolean gameIsRunning = false;
     PFont font;
+    PFont startingFont;
+    PFont instructionFont;
+    boolean gameStarted = false;
     public static void main(String[] args)  {
         PApplet.main("App");
     }
 
     public void setup(){
+        startingFont = createFont("Arial", 23, true);
+        instructionFont = createFont("Arial", 5, true);
         font = createFont("Arial", 20, true);
-        textFont(font);
+        textFont(startingFont);
         background(0);
+        textAlign(CENTER);
+        text("CLICK ENTER TO START",width/2,height/2-55);
+        text("Use the left and right \narrows to move\n\nup arrow to spin\n\ndown arrow to \nmove it down faster",width/2,height/2+5);
+        textFont(font);
     }
 
     public void settings(){
@@ -105,14 +98,24 @@ public class App extends PApplet{
                 }
                 checkEndGame();
             }else{
-                fill(255);
-                text("Game Over :)\nScore: "+score,10,20);
-                noLoop();
+                if(gameStarted){
+                    falling = false;
+                    board = new int[20][10];
+                    speed = 20;
+                    fill(255);
+                    text("Game Over :)\nScore: "+score,width/2-20,20);
+                    textFont(startingFont);
+                    text("CLICK ENTER TO START",width/2,height/2-55);
+                }
             }
         }
     }
 
     public void keyPressed() {
+        if(keyCode == ENTER){
+            gameStarted = true;
+            gameIsRunning = true;
+        }
         try{
             if (falling) {
                 clearShape(); 
@@ -155,28 +158,16 @@ public class App extends PApplet{
                 chooseShape(shape);
                 setShape();
             }
-        }catch(Exception e){
-            System.out.println("error:" + e.getMessage());
-        }
+        }catch(Exception e){}
     }
     
-
+    //gets the location coordinates of the points
     public static int cord(int location){
         int coordinates = 30*location;
         return coordinates;
     }
 
-    public boolean canRotate(int[][] shapeCordsCopy){
-        for(int i = 0; i<shapeCordsCopy.length;i++){
-            int x = shapeCordsCopy[i][0];
-            int y = shapeCordsCopy[i][1];
-            if(x < 0 || x >= 10 || y >= 20 || (y >= 0 && board[y][x] != 0)){
-                return false;
-            }
-        }
-        return true;
-    }
-
+    //rotates the shape if it can rotate
     public void rotateShape(){
         int[][] tempShapeCords = new int[4][2];
         for (int i = 0; i < shapeCords.length; i++) {
@@ -194,6 +185,7 @@ public class App extends PApplet{
         chooseShape(shape);
     }
 
+    //gets the coordinates of each piece of the square
     public void makeSquare(){
         shapeCords[0][0] = fallingX;
         shapeCords[0][1] = fallingY;
@@ -208,6 +200,7 @@ public class App extends PApplet{
         shapeCords[3][1] = fallingY + 1;
     }
 
+    //gets the coordinates of each piece of the L shape
     public void makeL(){
         if(rotationState == 0){
             shapeCords[0][0] = fallingX;
@@ -260,6 +253,7 @@ public class App extends PApplet{
         }
     }
 
+    //gets the coordinates of each piece of the backwards L shape
     public void makeBL(){
         if (rotationState == 0){
             shapeCords[0][0] = fallingX;
@@ -312,6 +306,7 @@ public class App extends PApplet{
         }
     }
 
+    //gets the coordinates of each piece of the line shape
     public void makeLine(){
         if(rotationState == 0){
             shapeCords[0][0] = fallingX;
@@ -364,6 +359,7 @@ public class App extends PApplet{
         }
     }
 
+    //gets the coordinates of each piece of the zig-zag shape with the L
     public void makeLZig(){
         if(rotationState == 0){
             shapeCords[0][0] = fallingX;
@@ -403,6 +399,8 @@ public class App extends PApplet{
             shapeCords[3][1] = fallingY+2;
         }
     }
+
+    //gets the coordinates of each piece of the zig-zag shape with the backwards L
     public void makeBLZig(){
         if(rotationState==0){
             shapeCords[0][0] = fallingX;
@@ -455,6 +453,7 @@ public class App extends PApplet{
         }
     }
 
+    //gets the coordinates of each piece of the weird t
     public void makeDaT(){
         if(rotationState==0){
             shapeCords[0][0] = fallingX;
@@ -507,6 +506,7 @@ public class App extends PApplet{
         }
     }
 
+    //allows me to use one method for every shape
     public void chooseShape(int shapeToMake){//1 is square, 2 is L, 3 is BL, 4 is Line, 5 is LZig, 6 is BLZig, 7 is DaT!
         switch(shapeToMake){
             case 1:
@@ -533,6 +533,7 @@ public class App extends PApplet{
         }
     }
 
+    //puts the coordinates of shapeCords onto the board
     public void setShape(){
         for (int i = 0; i < shapeCords.length; i++) {
             int x = shapeCords[i][0];
@@ -551,6 +552,7 @@ public class App extends PApplet{
         }
     }
 
+    //clears the shape from the board
     public void clearShape(){
         for (int i = 0; i < shapeCords.length; i++) {
             int x = shapeCords[i][0];
@@ -561,6 +563,7 @@ public class App extends PApplet{
         }
     }
 
+    //clears the row when it is a row of one color
     public void clearRows(){
         for(int y = 0; y < 20; y++){
             boolean rowIsFull = true;
@@ -570,7 +573,7 @@ public class App extends PApplet{
                 rowIsFull = false;
             }else{
                 for(int x = 1; x<10;x++){
-                    if(board[y][x]!=color){
+                    if(board[y][x]==0){
                         rowIsFull = false;
                         break;
                     }
@@ -578,6 +581,9 @@ public class App extends PApplet{
                 
                 if(rowIsFull){
                     score++;
+                    if(speed>6){
+                        speed-=2;
+                    }
                     for(int x = 0;x<10;x++){
                         board[y][x] = 0;
                     }
@@ -591,6 +597,7 @@ public class App extends PApplet{
         }
     }
 
+    //checks if shapes are at the top and ends the game
     public void checkEndGame(){
         for (int x = 0; x < 10; x++) {
             if (board[0][x] != 0) {
