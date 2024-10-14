@@ -38,7 +38,7 @@ public class App extends PApplet{
     }
 
     public void settings(){
-        size(300,600);
+        size(300,600);//sets the size of the window
     }
 
     public void draw(){
@@ -161,7 +161,7 @@ public class App extends PApplet{
         }catch(Exception e){}
     }
     
-    //gets the location coordinates of the points
+    //multiplies the coordinates by 30 to get the right location
     public static int cord(int location){
         int coordinates = 30*location;
         return coordinates;
@@ -174,7 +174,7 @@ public class App extends PApplet{
             tempShapeCords[i][0] = shapeCords[i][0];
             tempShapeCords[i][1] = shapeCords[i][1];
         }
-
+        boolean outOfBounds = false;
 
         if(rotationState == 3){
             rotationState = 0;
@@ -182,6 +182,37 @@ public class App extends PApplet{
             rotationState++;
         }
         
+        chooseShape(shape);
+
+        for (int i = 0; i < shapeCords.length; i++) {
+            if(shapeCords[i][0] < 0 || shapeCords[i][0] > 19){
+                outOfBounds = true;
+            }else if (shapeCords[i][1] > 19) {
+                outOfBounds = true;
+            }
+        }
+
+        if(!outOfBounds){
+            for(int i = 0; i < shapeCords.length; i++){
+                int pos = board[shapeCords[i][1]][shapeCords[i][0]];
+                if(pos != 0){
+                    outOfBounds = true;
+                    break;
+                }
+            }
+        }
+
+        if(outOfBounds){
+            if(rotationState == 0){
+                rotationState = 3;
+            }else{
+                rotationState--;
+            }
+            for (int i = 0; i < shapeCords.length; i++) {
+                shapeCords[i][0] = tempShapeCords[i][0];
+                shapeCords[i][1] = tempShapeCords[i][1];
+            }
+        }
         chooseShape(shape);
     }
 
