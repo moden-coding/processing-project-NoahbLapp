@@ -70,17 +70,18 @@ public class App extends PApplet{
                     }
                     
                 }else{
+                    clearRows();
                     fallingX = (int) random(2,9);
                     fallingY = 0;
                     fallingColor = (int)random(1,4);
                     shape = (int)random(1,8);
+                    rotationState = 0;
                     chooseShape(shape);
                     if (board[fallingY][fallingX] == 0) {
                         board[fallingY][fallingX] = fallingColor;
                         falling = true;
                     }
                 }
-                clearRows();
                 background(0);
                 for (int y = 0; y < 20; y++) {
                     for (int x = 0; x < 10; x++) {
@@ -185,7 +186,7 @@ public class App extends PApplet{
         chooseShape(shape);
 
         for (int i = 0; i < shapeCords.length; i++) {
-            if(shapeCords[i][0] < 0 || shapeCords[i][0] > 19){
+            if(shapeCords[i][0] < 0 || shapeCords[i][0] > 9){
                 outOfBounds = true;
             }else if (shapeCords[i][1] > 19) {
                 outOfBounds = true;
@@ -609,11 +610,11 @@ public class App extends PApplet{
                         break;
                     }
                 }
-                
                 if(rowIsFull){
                     score++;
-                    if(speed>6){
-                        speed-=2;
+                    falling = false;
+                    if(speed>7){
+                        speed-=1;
                     }
                     for(int x = 0;x<10;x++){
                         board[y][x] = 0;
